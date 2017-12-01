@@ -14,6 +14,8 @@
     random_client_id/3,
     subscribe_to_self/4,
     publish_to_self/5,
+    subscribe_to_worker_id/4,
+    publish_to_worker_id/5,
     client/2,
     worker_id/2,
     fixed_client_id/4]).
@@ -197,6 +199,14 @@ subscribe_to_self(#state{client = ClientId} = State, _Meta, TopicPrefix, Qos) ->
 
 publish_to_self(#state{client = ClientId} = State, _Meta, TopicPrefix, Payload, Qos) ->
     publish(State, _Meta, TopicPrefix ++ ClientId, Payload, Qos).
+
+subscribe_to_worker_id(State, _Meta, TopicPrefix, Qos) ->
+    {ID, State} = worker_id(State, _Meta),
+    subscribe(State, _Meta, TopicPrefix ++ integer_to_list(ID), Qos).
+
+publish_to_worker_id(State, _Meta, TopicPrefix, Payload, Qos) ->
+    {ID, State} = worker_id(State, _Meta),
+    publish(State, _Meta, TopicPrefix ++ integer_to_list(ID), Payload, Qos).
 
 client(#state{client = Client}=State, _Meta) ->
     {Client, State}.
